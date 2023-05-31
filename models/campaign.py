@@ -10,7 +10,7 @@ class Campaign(Base):
     __tablename__ = 'campaigns'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
+    title = Column(String(100), nullable=False)
     description = Column(String(500))
     start_date = Column(DateTime)
     end_date = Column(DateTime)
