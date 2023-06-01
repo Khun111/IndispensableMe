@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 '''Module to interact with User Model'''
+from .campaign import Campaign
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import declarative_base, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
 Base = declarative_base()
+
 
 class User(Base):
     '''Class to interact with User table'''
@@ -15,7 +17,9 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False)
     password_hash = Column(String(100), nullable=False)
 
-    campaigns = relationship('Campaign', backref='user', cascade='all, delete-orphan')
+    campaigns = relationship(
+                             'Campaign', backref='user',
+                             cascade='all, delete-orphan')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

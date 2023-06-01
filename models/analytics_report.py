@@ -5,6 +5,7 @@ from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
+
 class AnalyticsReport(Base):
     '''Class to interact with AnalyticsReport table'''
     __tablename__ = 'analytics_reports'

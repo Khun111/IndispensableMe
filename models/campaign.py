@@ -5,6 +5,7 @@ from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
+
 class Campaign(Base):
     '''Class to interact with campaign table'''
     __tablename__ = 'campaigns'
@@ -17,4 +18,7 @@ class Campaign(Base):
     budget = Column(Float)
 
     user_id = Column(Integer, ForeignKey('users.id'))
-    analytics_reports = relationship('AnalyticsReport', backref='campaign', cascade='all, delete-orphan')
+    analytics_reports = relationship(
+                                     'AnalyticsReport',
+                                     backref='campaign',
+                                     cascade='all, delete-orphan')
