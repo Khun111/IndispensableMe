@@ -18,4 +18,4 @@ class AnalyticsReport(Base):
     description = Column(String(500))
     generated_at = Column(DateTime)
 
-    campaign_id = Column(Integer, ForeignKey('campaign.id'))
+    campaign_id = Column(Integer, ForeignKey('campaigns.id'))
