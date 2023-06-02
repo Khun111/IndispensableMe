@@ -20,7 +20,7 @@ def register_user():
 
     session = Session()
     try:
-        exist = session.query(User).filter((User.username == username) | (User.email == email))
+        exist = session.query(User).filter((User.username == username) | (User.email == email)).first()
         if exist:
             return jsonify({'message': 'User already exists'})
         new_user = User(username=username, email=email)
