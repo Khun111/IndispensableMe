@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+import mysql.connector
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 import os
 
