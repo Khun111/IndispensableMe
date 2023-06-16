@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>IndispensableMe</title>
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#"><span style="color:red;">Indispensable</span><span>ME</span></a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse justify-content-center"
+          id="navbarNav"
+        >
+         
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#about">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#feature">Feature</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contact">Contact</a>
+            </li>
+          </ul>
+
+        
+        </div>
+
+        <div  class="collapse navbar-collapse justify-content-end"
+        id="navbarNav">
+          <ul class="navbar-nav box_b">
+            <li class="nav-item text-center " >
+              <a href="{{ url_for('login') }}" class=" btn btn-outline-success btn-sm mx-2 py-2">Login</a>
+            </li>
+
+            <li class="nav-item ">
+              <a href="{{ url_for('register') }}" class=" btn btn-outline-success btn-lg py-2">Register</a>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    
+    <header class="page-header gradient">
+      <div class="container pt-3">
+        <div class="row align-items-center justify-content-center">
+          <div class="col-md-5 text-success">
+            <h2><span style="color: #D9D9D9;">IndispensableME</span></h2>
+
+            <p>
+              API made even better.
+            </p>
+            <p>
+              Marketing automation is like a second brain to your business
+            </p>
+            
+
+            <!-- <button type="button" class="btn btn-outline-success btn-lg">
+              Get Started
+            </button> -->
+            <a href="{{ url_for('login') }}" class="btn btn-outline-success btn-lg">Get Started</a>
+          </div>
+          <div class="col-md-5">
+            <img
+              src=" {{ url_for('static', filename='img/im1.PNG') }}"
+              alt="Header image"
+              class="rounded"
+            />
+          </div>
+        </div>
+      </div>
+     
+    </header>
+
+
+    <section id="about">
+   
+      <div class="container">
+        <div class="row align-items-center">
+          <h1 class="text-center my-5 font-weight-bold text-success"> About</h1>
+          <div class="col-md-6">
+            <img class="img-fluid" src=" {{ url_for('static', filename='img/im4.svg') }}" alt="" />
+          </div>
+
+          <div class="col-md-6">
+            <h3 class="my-3">Introducing IndispensableMe</h3>
+            <p class="my-4">
+              An API (application programming interface) is a way to access a tools data and pull it into a database (or spreadsheet) without logging in to that tool.
+            <br> APIs allow an application to extract information from a piece of software and then use that information.
+            There are several existing solutions for marketing APIs, including: Google Marketing Platform API, Facebook Marketing API, etc.
+              <br>
+            </p>
+            <p class="my-4">
+                IndispensableMe is designed to be more flexible and customizable, with the ability to integrate with a wider range of marketing tools and platforms beyond those offered by some other marketing APIs.
+              
+            </p>
+            <p>It is open source and free to use.  Our API is designed to be more customizable, with the ability to create custom endpoints and data structures
+            </p>
+
+            <p>
+              IndispensableMe is an essential tool for businesses that want to automate their marketing campaigns, track customer behavior, and analyze data to improve their ROI.
+
+            </p>
+          </div>
+        </div>
+        <div class="team">
+            
+          <h3 class="text-center my-5 font-weight-bold text-success">Team Members</h3>
+          <h4 class="text-muted">Meet the team:</h4>
+          <div class="row row-cols-1 row-cols-md-3 g-4 py-5">
+              <div class="col">
+                <div class="card">
+                  <img src=" {{ url_for('static', filename='img/im9.PNG') }}" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Bam Adeyinka</h5>
+                    <p class="card-text">A Full stack developer</p>
+                  </div>
+                  <div class="d-flex justify-content-evenly p-4">
+                      <a href="#"><i class="bi bi-linkedin"></i></a>
+                      <a href="#"><i class="bi bi-envelope-fill"></i></a>
+                      <a href="#"><i class="bi bi-whatsapp"></i></a>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card">
+                  <img src=" {{ url_for('static', filename='img/im7.PNG') }}" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Adesola Jessica</h5>
+                    <p class="card-text">A Frontend developer</p>
+                  </div>
+                  <div class="d-flex justify-content-evenly p-4">
+                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                        <a href="#"><i class="bi bi-envelope-fill"></i></a>
+                        <a href="#"><i class="bi bi-whatsapp"></i></a>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card">
+                  <img src=" {{ url_for('static', filename='img/im8.PNG') }}" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Amure Tobi</h5>
+                    <p class="card-text">A Fullstack developer</p>
+                  </div>
+                  <div class="d-flex justify-content-evenly p-4">
+                      <a href="#"><i class="bi bi-linkedin"></i></a>
+                      <a href="#"><i class="bi bi-envelope-fill"></i></a>
+                      <a href="#"><i class="bi bi-whatsapp"></i></a>
+                  </div>
+                </div>
+              </div>
+          
+          </div>
+        </div>
+      </div>
+    
+    </section>
+
+    <section class="feature_section d-flex jusitfy-content-center align-items-center " id="feature">
+        <div class="container">
+
+            <div class="features d-flex flex-column justify-content-center align-items-center gap-4 py-5 text-center">
+                <div class="features-header">
+                    <h2 class="h2 text-success">Features</h2>
+                    <small class="text-black-50">Explore what we have for you</small>
+                </div>
+
+                <div class="features-body d-grid text-success">
+                    <section class="feature-item d-flex flex-column gap-1 rounded-4 p-5 first-gradient">
+                        <i class="feature-icon rounded-pill bi-clipboard"></i>
+                        <strong class="feature-title">Marketing Automation</strong>
+                        <small class="feature-subtitle text-black-50">Using marketing automation tools and marketing APIs in unison help businesses boost productivity, save money, speed up operations, scale more efficiently.</small>
+                        <a href="#" class="text-black">Read More</a>
+                    </section>
+
+                    <section class="feature-item d-flex flex-column gap-1 rounded-4 p-5 second-gradient">
+                        <i class="feature-icon rounded-pill bi-clipboard"></i>
+                        <strong class="feature-title">Email Marketing</strong>
+                        <small class="feature-subtitle text-black-50"> Business platforms work with email servers to notify customers of important information or confirm a transaction that just occurred.
+                            <br> Sure, you could send your customers an email manually, but this wouldn't allow for much scalability in the future.
+                        </small>
+                        <a href="#" class="text-black">Read More</a>
+                    </section>
+                    
+                    <section class="feature-item d-flex flex-column gap-1 rounded-4 p-5 third-gradient">
+                        <i class="feature-icon rounded-pill bi-clipboard"></i>
+                        <strong class="feature-title">Social Media</strong>
+                        <small class="feature-subtitle text-black-50">Social media marketing can help streamline your campaign by letting you manage and monitor content all from the same dashboard. This can get as convenient as scheduling daily posts.</small>
+                        <a href="#" class="text-black">Read More</a>
+                    </section>
+                    
+                    <section class="feature-item d-flex flex-column gap-1 rounded-4 p-5 fourth-gradient">
+                        <i class="feature-icon rounded-pill bi-clipboard"></i>
+                        <strong class="feature-title">Data Collection</strong>
+                        <small class="feature-subtitle text-black-50">Data collection serves as one more general use case for marketing APIs.</small>
+                        <a href="#" class="text-black">Read More</a>
+                    </section>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="container-fluid" id="contact">
+      <div class="container jusitfy-content-center align-items-center">
+        <div class="row">
+          <h3 class="text-center my-5 font-weight-bold text-success">Contact us</h3>
+          <div class="col-md-5">
+            <div class="mb-3">
+              <label for="formControlInput1" class="form-label"
+                >Email address</label
+              >
+              <input
+                type="email"
+                class="form-control"
+                id="formControlInput1"
+                placeholder="Enter your email"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="formControlTextarea1" class="form-label"
+                >Message:</label
+              >
+              <textarea
+                class="form-control"
+                id="formControlTextarea1"
+                rows="3" placeholder="Enter a your message here"
+              ></textarea>
+            </div>
+            <button type="button" class="btn btn-outline-secondary">
+              Send
+            </button>
+          </div>
+          <div class="col-md-7">
+            <img src=" {{ url_for('static', filename='img/im6.PNG') }}" alt="Contact image" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="container-fluid my-5 foot">
+      <div class="container p-4 text-center">
+        <div class="row">
+          <div class="col-lg-4 col-md-6 mb-4">
+            <h5 class="mb-3" style="letter-spacing: 2px; color: #7f4722;">Company</h5>
+            <ul class="list-unstyled mb-0">
+              <li class="mb-1">
+                <a href="#about" >About</a>
+              </li>
+              <li class="mb-1">
+                <a href="#team" >Team</a>
+              </li>
+              <li class="mb-1">
+                <a href="#feature" >Feature</a>
+              </li>
+              <li class="mb-1">
+                <a href="#contact" >Contact</a>
+              </li>
+        
+            </ul>
+          </div>
+          <div class="col-lg-4 col-md-6 mb-4">
+            <h5 class="mb-3" style="letter-spacing: 2px; color: #7f4722;">Features</h5>
+            <ul class="list-unstyled mb-0">
+              <li class="mb-1">
+                <a href="#!" >Marketing Automation</a>
+              </li>
+              <li class="mb-1">
+                <a href="#!" >Email Marketing</a>
+              </li>
+              <li class="mb-1">
+                <a href="#!" >Email Marketing</a>
+              </li>
+              <li>
+                <a href="#!" >Social Media</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-lg-4 col-md-6 mb-4">
+            <h5 class="mb-3" style="letter-spacing: 2px; color: #7f4722;">&nbsp;</h5>
+            <ul class="list-unstyled mb-0">
+              <li class="mb-1">
+                <a href="#!" ></a>
+              </li>
+              <li class="mb-1">
+                <a href="{{ url_for('login') }}" >
+                  login
+                </a>
+              </li>
+              <li class="mb-1">
+                <a href="{{ url_for('register') }}" >Register</a>
+              </li>
+              <li>
+                <a href="#!" >Support</a>
+              </li>
+            </ul>
+          </div>
+          
+        </div>
+      </div>
+      <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        © 2023 Copyright - IndispensableTeam
+      </div>
+    </footer>
+      
+    
+</div>
+
+{% endblock %}
