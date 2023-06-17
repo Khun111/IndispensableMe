@@ -16,14 +16,14 @@
                     <div class="col-md-6">
                         <div class="row my-4">
                             <div class="col-md-10 ">
-                               <a href="{{ url_for('home') }}" style="text-decoration: none;"> <span>Indispens</span><span class="text-danger">able</span><span>ME</span></a>
+                               <a href="{{ url_for('index') }}" style="text-decoration: none;"> <span>Indispens</span><span class="text-danger">able</span><span>ME</span></a>
                             </div>
                            
-                            <a href="{{ url_for('login') }}" class="col-md-2 btn btn-outline-success btn-sm py-2" style="text-decoration: none;">Login</a>
+                            <a href="{{ url_for('users.login') }}" class="col-md-2 btn btn-outline-success btn-sm py-2" style="text-decoration: none;">Login</a>
                         </div>
                         <h3 class="text-center text-success"> Register</h3>
                         <div class="top">
-                            <form action="#" method="POST" class="m-5">
+                            <form action="{{ url_for('users.register') }}" method="POST" class="m-5">
                                 <div class="mb-3 box">
                                     <label class="form-label" for="first_name">First Name </label>
                                     <input  class="form-control" name="fName" type="text" id="first_name" required>                                   
@@ -50,7 +50,7 @@
                                 </div>
                                 <div class="mb-3 box">
                                     <div class="text-center">
-                                        <input type="submit" class="btn btn-primary mt-3 mx-auto text-center">
+                                        <input type="submit" class="btn btn-primary mt-3 mx-auto text-center" onclick="register()">
                                     </div>
                                 </div>
                             </form>
@@ -66,3 +66,31 @@
 </section>
 
 {% endblock %}
+
+<!-- {% block script %}
+<script>
+    function register(e) {
+        e.preventDefault();
+        var username = document.getElementById('username')
+        var email = document.getElementById('user_email')
+        var password = document.getElementById('password')
+
+        var entry = {
+            username: username.value,
+            email: email.value,
+            password: password.value
+        }
+        const url = "url_for('users.register')"
+        fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify(entry),
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+    }
+</script>
+{% endblock %} -->
