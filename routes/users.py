@@ -25,6 +25,7 @@ def send_email(recipient, message, body):
     msg.body = body
 
     mail.send(msg)
+<<<<<<< HEAD
 @users_bp.route('/register', methods=['GET'])
 def register():
     return render_template('register.html')
@@ -37,25 +38,42 @@ def register_user():
     username = request.json.get('username')
     password = request.json.get('password')
     email = request.json.get('email')
+=======
+'''
+@users_bp.route('/register')
+def register():
+     
+'''
 
-    try:
-        exist = User.query.filter_by(username=username).first()
-        if exist:
-            return make_response(jsonify({'message': 'User already exists'}), 409)
-        new_user = User(username=username, email=email)
-        new_user.set_password(password)
-        db.session.add(new_user)
-        db.session.commit()
+>>>>>>> 6f802728022f1f1965eda8089af09f5df76d4e9e
 
-        expiration_time = datetime.utcnow() + timedelta(hours=24)
-        payload = {'email': email, 'purpose': 'email_verification','exp': expiration_time.timestamp()}
-        token = serializer.dumps(payload)
-        verification_link = url_for('users.verify_email', token=token, _external=True)
-        body = f'Click here to verify your email: {verification_link}'
-        send_email(email, 'Verify Email', body)
-        return make_response(jsonify({'message': 'Verification email sent'}), 200)
-    except IntegrityError as e:
-        return make_response(jsonify({'error': 'Error occured during registration'}), 400)
+    
+@users_bp.route('/register', methods=['GET', 'POST'] )
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        email = request.form.get('email')
+
+        try:
+            exist = User.query.filter_by(username=username).first()
+            if exist:
+                return make_response(jsonify({'message': 'User already exists'}), 409)
+            new_user = User(username=username, email=email)
+            new_user.set_password(password)
+            db.session.add(new_user)
+            db.session.commit()
+
+            expiration_time = datetime.utcnow() + timedelta(hours=24)
+            payload = {'email': email, 'purpose': 'email_verification','exp': expiration_time.timestamp()}
+            token = serializer.dumps(payload)
+            verification_link = url_for('users.verify_email', token=token, _external=True)
+            body = f'Click here to verify your email: {verification_link}'
+            send_email(email, 'Verify Email', body)
+            return make_response(jsonify({'message': 'Verification email sent'}), 200)
+        except IntegrityError as e:
+            return make_response(jsonify({'error': 'Error occured during registration'}), 400)
+    return render_template('register.html')
 
 @jwt.unauthorized_loader
 def unauthorized_callback(callback):
@@ -65,21 +83,23 @@ def unauthorized_callback(callback):
 def expired_token_callback(callback):
     return make_response(jsonify({'message': 'Token has expired'}), 401)
 
-@users_bp.route('/login', methods=['POST'])
-def login_user():
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
+@users_bp.route('/login', methods=['GET','POST'])
+def login():
+    if request.method == 'POST':
+        data = request.form
+        username = data.get('username')
+        password = data.get('password')
 
-    user = User.query.filter_by(username=username).first()
-    if not user or not user.verify_password(password):
-        return make_response(jsonify({'message': 'Invalid username or password'}), 401) 
-    if not user.email_verified:
-        return make_response(jsonify({'message': 'Email not verified. Please verify your email to login.'}), 400)
+        user = User.query.filter_by(username=username).first()
+        if not user or not user.verify_password(password):
+            return make_response(jsonify({'message': 'Invalid username or password'}), 401) 
+        if not user.email_verified:
+            return make_response(jsonify({'message': 'Email not verified. Please verify your email to login.'}), 400)
 
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
-    return make_response(jsonify({'access_token': access_token, 'refresh_token': refresh_token}), 200)
+        access_token = create_access_token(identity=user.id)
+        refresh_token = create_refresh_token(identity=user.id)
+        return make_response(jsonify({'access_token': access_token, 'refresh_token': refresh_token}), 200)
+    return render_template('login.html')
 
 @users_bp.route('/logout', methods=['POST'])
 def logout_user():
@@ -107,21 +127,23 @@ def generate_reset_token(user_id):
     reset_token = pyjwt.encode(payload, secret_key, algorithm='HS256')
     return reset_token
 
-@users_bp.route('/password_request', methods=['POST'])
-def password_reset_token():
-    email = request.json.get('email')
+@users_bp.route('/password_request', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
 
-    user = User.query.filter_by(email=email).first()
-    if user:
-        reset_token = generate_reset_token(user.id)
-        verification_link = url_for('users.reset_password', token=reset_token, _external=True)
-        body = f'Click here to reset your password: {verification_link}'
-        send_email(user.email, 'Password reset', body)
-    return make_response(jsonify({'message': 'An email has been sent to reset your password'}), 200)
+        user = User.query.filter_by(email=email).first()
+        if user:
+            reset_token = generate_reset_token(user.id)
+            verification_link = url_for('users.reset_password', token=reset_token, _external=True)
+            body = f'Click here to reset your password: {verification_link}'
+            send_email(user.email, 'Password reset', body)
+        return make_response(jsonify({'message': 'An email has been sent to reset your password'}), 200)
+    return render_template('forget_Password.html')
 
 @users_bp.route('/reset_password/<token>', methods=['POST'])
 def reset_password(token):
-    new_password = request.json.get('new_password')
+    new_password = request.form.get('new_password')
 
     try:
         payload = pyjwt.decode(token, secret_key, algorithms=['HS256'])
@@ -142,7 +164,7 @@ def reset_password(token):
 
 @users_bp.route('/email_verification', methods=['POST'])
 def verification_request():
-    email = request.json.get('email')
+    email = request.form.get('email')
     user = User.query.filter_by(email=email).first()
 
     if user:

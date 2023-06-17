@@ -30,6 +30,7 @@ migrate.init_app(app, db)
 mail.init_app(app)
 bcrypt.init_app(app)
 jwt.init_app(app)
+<<<<<<< HEAD
 
 @app.route('/')
 @app.route('/home')
@@ -37,6 +38,14 @@ jwt.init_app(app)
 def index():
     return render_template('index.html')
 from .routes.users import users_bp
+=======
+from .routes.users import users_bp
+
+@app.route('/')
+@app.route('/home')
+def index():
+    return render_template('index.html')
+>>>>>>> 6f802728022f1f1965eda8089af09f5df76d4e9e
 app.register_blueprint(users_bp)
 if __name__ == '__main__':
     app.run(debug=True)
