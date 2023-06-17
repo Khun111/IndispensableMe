@@ -2,12 +2,12 @@
 '''Module for authentication route'''
 from datetime import datetime, timedelta
 import jwt as pyjwt
-from key import secret_key
+from ..key import secret_key
 from itsdangerous import URLSafeTimedSerializer, BadSignature
-from flask import request, jsonify, Blueprint, make_response, url_for, session
+from flask import request, jsonify, Blueprint, make_response, url_for, session, render_template
 from sqlalchemy.exc import IntegrityError
-from models import User
-from extensions import db, jwt, mail, Message
+from ..models import User
+from ..extensions import db, jwt, mail, Message
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -25,8 +25,14 @@ def send_email(recipient, message, body):
     msg.body = body
 
     mail.send(msg)
+@users_bp.route('/register', methods=['GET'])
+def register():
+    return render_template('register.html')
 
-@users_bp.route('/register', methods=['POST'])
+@users_bp.route('/login', methods=['GET'])
+def login():
+    return render_template('login.html')
+@users_bp.route('/register_me')
 def register_user():
     username = request.json.get('username')
     password = request.json.get('password')
