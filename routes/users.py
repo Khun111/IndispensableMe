@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import jwt as pyjwt
 from ..key import secret_key
 from itsdangerous import URLSafeTimedSerializer, BadSignature
-from flask import request, jsonify, Blueprint, make_response, url_for, session, render_template
+from flask import request, jsonify, Blueprint, make_response, url_for, session, render_template, redirect
 from sqlalchemy.exc import IntegrityError
 from ..models import User
 from ..extensions import db, jwt, mail, Message
@@ -25,13 +25,15 @@ def send_email(recipient, message, body):
     msg.body = body
 
     mail.send(msg)
-'''
-@users_bp.route('/register')
-def register():
-     
-'''
 
+@users_bp.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html', user=user.username)
+    
 
+@users_bp.route('/campaign')
+def campaign():
+    return render_template('campaign.html')
     
 @users_bp.route('/register', methods=['GET', 'POST'] )
 def register():
@@ -83,11 +85,11 @@ def login():
 
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
-        return make_response(jsonify({'access_token': access_token, 'refresh_token': refresh_token}), 200)
+        return render_template('dashboard.html', user=user.username)
     return render_template('login.html')
 
-@users_bp.route('/logout', methods=['POST'])
-def logout_user():
+@users_bp.route('/logout', methods=['GET','POST'])
+def logout():
     session.clear()
     return make_response(jsonify({'message': 'User successfully logged out'}), 200)
 
@@ -104,13 +106,13 @@ def refresh():
     new_token = create_access_token(identity=current_user)
     return jsonify({'access_token': new_token})
 
-def generate_reset_token(user_id):
-    payload = {
-        'user_id': user_id,
-        'purpose': 'password_reset'
-    }
-    reset_token = pyjwt.encode(payload, secret_key, algorithm='HS256')
-    return reset_token
+# def generate_reset_token(user_id):
+#     payload = {
+#         'user_id': user_id,
+#         'purpose': 'password_reset'
+#     }
+#     reset_token = pyjwt.encode(payload, secret_key, algorithm='HS256')
+#     return reset_token
 
 @users_bp.route('/password_request', methods=['GET', 'POST'])
 def forgot_password():
@@ -119,8 +121,9 @@ def forgot_password():
 
         user = User.query.filter_by(email=email).first()
         if user:
-            reset_token = generate_reset_token(user.id)
-            verification_link = url_for('users.reset_password', token=reset_token, _external=True)
+            payload = {'user_id': user.id, 'purpose': 'password_reset'}
+            token = serializer.dumps(payload)
+            verification_link = url_for('users.reset_password', token=token, _external=True)
             body = f'Click here to reset your password: {verification_link}'
             send_email(user.email, 'Password reset', body)
         return make_response(jsonify({'message': 'An email has been sent to reset your password'}), 200)
@@ -131,7 +134,7 @@ def reset_password(token):
     new_password = request.form.get('new_password')
 
     try:
-        payload = pyjwt.decode(token, secret_key, algorithms=['HS256'])
+        payload = serializer.loads(token)
         user_id = payload['user_id']
         purpose = payload['purpose']
 
@@ -140,10 +143,10 @@ def reset_password(token):
             user.set_password(new_password)
             db.session.commit()
             return make_response(jsonify({'message': 'Password reset was succesful'}), 200)
-    except pyjwt.ExpiredSignatureError:
-        return make_response(jsonify({'message': 'Token is invalid or has expired'}), 400)
-    except pyjwt.DecodeError:
-        return make_response(jsonify({'message': 'Enter a valid token'}), 400)
+    except BadSignature:
+        return make_response(jsonify({'message': 'Invalid or expired token'}), 400)
+    except Exception as e:
+        return make_response(jsonify({'message': 'Error verifying email', 'error': str(e)}), 500)
 
     return make_response(jsonify({'message': 'Enter a valid token'}), 400)
 
