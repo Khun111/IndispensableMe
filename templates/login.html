@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>IndispensableMe</title>
+{% endblock %}
+
+{% block content %}
+
+<section class="d-flex flex-column min-vh-100 jusitfy-content-center align-items-center">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12 mx-auto rounded shadow bg-white">
+              <div class="row">
+                  <div class="col-md-6">
+                      <div class="row my-4">
+                          <div class="col-md-10 ">
+                              <a href="{{ url_for('index') }}" style="text-decoration: none;"> <span>Indispens</span><span class="text-danger">able</span><span>ME</span></a>
+                          </div>
+                          <a href="{{ url_for('users.register') }}" class="col-md-2 btn btn-outline-success btn-sm py-2" style="text-decoration: none;">Register</a>
+                      </div>
+                      <h3 class="text-center text-success">Login</h3>
+                      <form action="{{ url_for('users.login') }}" method="POST" class="m-5 top">
+                          
+                          <div class="row">
+                              <div class="col-md-1">
+                                  <i class="fa fa-envelope"></i>
+                              </div>
+                              <div class="col-md-10">
+                                  <input  class="form-control" type="email" name="email" id="user_email" placeholder="Enter email...">   
+                              </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-1">
+                                <i class="fa fa-envelope"></i>
+                            </div>
+                            <div class="col-md-10">
+                                <input  class="form-control" type="text" name="username" id="username" placeholder="Enter username...">   
+                            </div>
+                        </div>
+
+                          <div class="row">
+                              <div class="col-md-1">
+                                  <i class="fa fa-key"></i>
+                              </div>
+                              <div class="col-md-10">
+                                  <input  class="form-control" type="password" name="password" id="user_password" placeholder="Enter password">   
+                              </div>
+                          </div>
+
+                          <div class="mb-3 box_1">
+                              <div class="col-6">
+                                  <div class="form-check">
+                                      <input type="checkbox" value="check" class="form-check-input" id="remember me">
+                                      <label for="remember-me" class="form-check-label">Remember me</label>
+                                  </div>
+                              </div>
+                              <div class="col-6">
+                                  <div class="text-end">
+                                      <a href="{{ url_for('users.forgot_password') }}">Forgot password?</a>
+                                  </div>
+                              </div>
+
+                              <div class="text-center">
+                                  <input type="submit" class="btn btn-primary mt-3 mx-auto text-center">
+                              </div>
+                          </div>
+                      </form>
+                  </div>
+                  <div class="col-md-6  " >
+                      <img src="{{ url_for('static', filename='img/im1.PNG') }}" alt="">
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+{% endblock %}

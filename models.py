@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime, Text, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from extensions import db, bcrypt
+from .extensions import db, bcrypt
 
 
 class Base(db.Model):

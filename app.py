@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask
+from flask import Flask, render_template
 from dotenv import load_dotenv
-from extensions import db, migrate, bcrypt, mail, jwt
-from key import secret_key
+from .extensions import db, migrate, bcrypt, mail, jwt
+from .key import secret_key
 import os
 
 load_dotenv()
@@ -30,7 +30,12 @@ migrate.init_app(app, db)
 mail.init_app(app)
 bcrypt.init_app(app)
 jwt.init_app(app)
-from routes.users import users_bp
+from .routes.users import users_bp
+
+@app.route('/')
+@app.route('/home')
+def index():
+    return render_template('index.html')
 app.register_blueprint(users_bp)
 if __name__ == '__main__':
     app.run(debug=True)
