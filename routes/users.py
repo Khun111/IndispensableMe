@@ -28,7 +28,8 @@ def send_email(recipient, message, body):
 
 @users_bp.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html', user=user.username)
+    user = session.get('username')
+    return render_template('dashboard.html', user=user)
     
 
 @users_bp.route('/campaign')
@@ -85,7 +86,7 @@ def login():
 
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
-        return render_template('dashboard.html', user=user.username)
+        return redirect(url_for('users.dashboard'))
     return render_template('login.html')
 
 @users_bp.route('/logout', methods=['GET','POST'])
@@ -129,26 +130,27 @@ def forgot_password():
         return make_response(jsonify({'message': 'An email has been sent to reset your password'}), 200)
     return render_template('forget_Password.html')
 
-@users_bp.route('/reset_password/<token>', methods=['POST'])
+@users_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     new_password = request.form.get('new_password')
 
-    try:
-        payload = serializer.loads(token)
-        user_id = payload['user_id']
-        purpose = payload['purpose']
+    if request.method == 'POST':
+        try:
+            payload = serializer.loads(token)
+            user_id = payload['user_id']
+            purpose = payload['purpose']
 
-        if purpose == 'password_reset':
-            user = User.query.get(user_id)
-            user.set_password(new_password)
-            db.session.commit()
-            return make_response(jsonify({'message': 'Password reset was succesful'}), 200)
-    except BadSignature:
-        return make_response(jsonify({'message': 'Invalid or expired token'}), 400)
-    except Exception as e:
-        return make_response(jsonify({'message': 'Error verifying email', 'error': str(e)}), 500)
+            if purpose == 'password_reset':
+                user = User.query.get(user_id)
+                user.set_password(new_password)
+                db.session.commit()
+                return redirect(url_for('users.login'))
+        except BadSignature:
+            return make_response(jsonify({'message': 'Invalid or expired token'}), 400)
+        except Exception as e:
+            return make_response(jsonify({'message': 'Error verifying email', 'error': str(e)}), 500)
 
-    return make_response(jsonify({'message': 'Enter a valid token'}), 400)
+    return render_template('reset_password.html', token=token)
 
 @users_bp.route('/email_verification', methods=['POST'])
 def verification_request():
