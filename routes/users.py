@@ -3,8 +3,8 @@
 from datetime import datetime, timedelta
 import jwt as pyjwt
 from ..key import secret_key
-from itsdangerous import URLSafeTimedSerializer, BadSignature
-from flask import request, jsonify, Blueprint, make_response, url_for, session, render_template, redirect
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
+from flask import request, jsonify, Blueprint, make_response, url_for, session, render_template, redirect, flash
 from sqlalchemy.exc import IntegrityError
 from ..models import User
 from ..extensions import db, jwt, mail, Message
@@ -26,10 +26,10 @@ def send_email(recipient, message, body):
 
     mail.send(msg)
 
-@users_bp.route('/dashboard')
-def dashboard():
-    user = session.get('username')
-    return render_template('dashboard.html', user=user)
+@users_bp.route('/dashboard/<name>')
+@users_bp.route('/dashboard', defaults={'name': 'User'})
+def dashboard(name):
+    return render_template('dashboard.html', user=name)
     
 
 @users_bp.route('/campaign')
@@ -46,7 +46,9 @@ def register():
         try:
             exist = User.query.filter_by(username=username).first()
             if exist:
-                return make_response(jsonify({'message': 'User already exists'}), 409)
+                flash('User already exist', 'error')
+                return redirect(url_for('users.register'))
+                #return make_response(jsonify({'message': 'User already exists'}), 409)
             new_user = User(username=username, email=email)
             new_user.set_password(password)
             db.session.add(new_user)
@@ -86,28 +88,29 @@ def login():
 
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
-        return redirect(url_for('users.dashboard'))
+        return dashboard(username)
     return render_template('login.html')
 
 @users_bp.route('/logout', methods=['GET','POST'])
 def logout():
     session.clear()
-    return make_response(jsonify({'message': 'User successfully logged out'}), 200)
+    #return make_response(jsonify({'message': 'User successfully logged out'}), 200)
+    return redirect(url_for('index'))
 
-@users_bp.route('/secured', methods=['GET'])
-@jwt_required()
-def secured():
-    current_user = get_jwt_identity()
-    return jsonify({'message': 'Secured route', 'user': current_user})
+# @users_bp.route('/secured', methods=['GET'])
+# @jwt_required()
+# def secured():
+#     current_user = get_jwt_identity()
+#     return jsonify({'message': 'Secured route', 'user': current_user})
 
-@users_bp.route('/refresh', methods=['POST'])
-@jwt_required(refresh=True)
-def refresh():
-    current_user = get_jwt_identity()
-    new_token = create_access_token(identity=current_user)
-    return jsonify({'access_token': new_token})
+# @users_bp.route('/refresh', methods=['POST'])
+# @jwt_required(refresh=True) 
+# def refresh():
+#     current_user = get_jwt_identity()
+#     new_token = create_access_token(identity=current_user)
+#     return jsonify({'access_token': new_token})
 
-# def generate_reset_token(user_id):
+# def generate_reset_token(use r_id):
 #     payload = {
 #         'user_id': user_id,
 #         'purpose': 'password_reset'
@@ -143,7 +146,7 @@ def reset_password(token):
             if purpose == 'password_reset':
                 user = User.query.get(user_id)
                 user.set_password(new_password)
-                db.session.commit()
+                db.session.commit() 
                 return redirect(url_for('users.login'))
         except BadSignature:
             return make_response(jsonify({'message': 'Invalid or expired token'}), 400)
@@ -152,17 +155,17 @@ def reset_password(token):
 
     return render_template('reset_password.html', token=token)
 
-@users_bp.route('/email_verification', methods=['POST'])
-def verification_request():
-    email = request.form.get('email')
-    user = User.query.filter_by(email=email).first()
+# @users_bp.route('/email_verification', methods=['POST'])
+# def verification_request():
+#     email = request.form.get('email')
+#     user = User.query.filter_by(email=email).first()
 
-    if user:
-        verification_token = serializer.dumps({'user_id': user.id, 'purpose': 'email_verification'})
-        verification_link = url_for('users.verify_email', token=verification_token, _external=True)
-        body = f'Click here to reset your password: {verification_link}'
-        send_email(user.email, 'Email verification', body)
-    return make_response(jsonify({'message': 'Email verification sent'}), 200)
+#     if user:
+#         verification_token = serializer.dumps({'user_id': user.id, 'purpose': 'email_verification'})
+#         verification_link = url_for('users.verify_email', token=verification_token, _external=True)
+#         body = f'Click here to reset your password: {verification_link}'
+#         send_email(user.email, 'Email verification', body)
+#     return make_response(jsonify({'message': 'Email verification sent'}), 200)
 
 
 @users_bp.route('/verify_email/<token>', methods=['GET'])
@@ -189,9 +192,13 @@ def verify_email(token):
         user.email_verified = True
         db.session.commit()
 
-        return make_response(jsonify({'message': 'Email successfully verified'}), 200)
+        flash('Email successfully verified', 'success')
+        return redirect(url_for('users.login'))
+        #return make_response(jsonify({'message': 'Email successfully verified'}), 200)
     except BadSignature:
-        return make_response(jsonify({'message': 'Invalid or expired token'}), 400)
+        flash('Invalid or expired token', 'error')
+        return redirect(url_for('users.register'))
+        #return make_response(jsonify({'message': 'Invalid or expired token'}), 400)
     except Exception as e:
         return make_response(jsonify({'message': 'Error verifying email', 'error': str(e)}), 500)
 
