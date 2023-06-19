@@ -60,7 +60,8 @@ def register():
             verification_link = url_for('users.verify_email', token=token, _external=True)
             body = f'Click here to verify your email: {verification_link}'
             send_email(email, 'Verify Email', body)
-            return make_response(jsonify({'message': 'Verification email sent'}), 200)
+            flash('Verification email sent', 'success')
+            #return make_response(jsonify({'message': 'Verification email sent'}), 200)
         except IntegrityError as e:
             return make_response(jsonify({'error': 'Error occured during registration'}), 400)
     return render_template('register.html')
@@ -82,9 +83,13 @@ def login():
 
         user = User.query.filter_by(username=username).first()
         if not user or not user.verify_password(password):
-            return make_response(jsonify({'message': 'Invalid username or password'}), 401) 
+            flash('Invalid username or password', 'error')
+            return redirect(url_for('users.login'))
+            #return make_response(jsonify({'message': 'Invalid username or password'}), 401) 
         if not user.email_verified:
-            return make_response(jsonify({'message': 'Email not verified. Please verify your email to login.'}), 400)
+           # return make_response(jsonify({'message': 'Email not verified. Please verify your email to login.'}), 400)
+           flash('Email not verified. Please verify your email to login.', 'error')
+           return redirect(url_for('users.login'))
 
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
@@ -95,6 +100,7 @@ def login():
 def logout():
     session.clear()
     #return make_response(jsonify({'message': 'User successfully logged out'}), 200)
+    flash('You have successfully logged out', 'success')
     return redirect(url_for('index'))
 
 # @users_bp.route('/secured', methods=['GET'])
@@ -110,10 +116,10 @@ def logout():
 #     new_token = create_access_token(identity=current_user)
 #     return jsonify({'access_token': new_token})
 
-# def generate_reset_token(use r_id):
+# def generate_reset_token(user_id):
 #     payload = {
 #         'user_id': user_id,
-#         'purpose': 'password_reset'
+#         'purpose': 'email_verification'
 #     }
 #     reset_token = pyjwt.encode(payload, secret_key, algorithm='HS256')
 #     return reset_token
@@ -130,7 +136,9 @@ def forgot_password():
             verification_link = url_for('users.reset_password', token=token, _external=True)
             body = f'Click here to reset your password: {verification_link}'
             send_email(user.email, 'Password reset', body)
-        return make_response(jsonify({'message': 'An email has been sent to reset your password'}), 200)
+            flash('An email has been sent to reset your password', 'success')
+            return redirect(url_for('users.forgot_password'))
+        #return make_response(jsonify({'message': 'An email has been sent to reset your password'}), 200)
     return render_template('forget_Password.html')
 
 @users_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
@@ -146,10 +154,13 @@ def reset_password(token):
             if purpose == 'password_reset':
                 user = User.query.get(user_id)
                 user.set_password(new_password)
-                db.session.commit() 
+                db.session.commit()
+                flash('Password reset was successful. Login with your new password', 'success')
                 return redirect(url_for('users.login'))
         except BadSignature:
-            return make_response(jsonify({'message': 'Invalid or expired token'}), 400)
+            flash('Invalid or expired token', 'success')
+            return redirect(url_for('users.forgot_password'))
+            #return make_response(jsonify({'message': 'Invalid or expired token'}), 400)
         except Exception as e:
             return make_response(jsonify({'message': 'Error verifying email', 'error': str(e)}), 500)
 
@@ -170,6 +181,8 @@ def reset_password(token):
 
 @users_bp.route('/verify_email/<token>', methods=['GET'])
 def verify_email(token):
+    if not token:
+        return make_response(jsonify(error='Invalid Token'), 400)
     try:
         '''Decode and verify the token'''
         payload = serializer.loads(token, max_age=24*3600)
@@ -196,7 +209,7 @@ def verify_email(token):
         return redirect(url_for('users.login'))
         #return make_response(jsonify({'message': 'Email successfully verified'}), 200)
     except BadSignature:
-        flash('Invalid or expired token', 'error')
+        flash('Token is invalid or has expired')
         return redirect(url_for('users.register'))
         #return make_response(jsonify({'message': 'Invalid or expired token'}), 400)
     except Exception as e:

@@ -7,6 +7,19 @@
 {% block content %}
 
 <div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <ul>
+      {% for category, message in messages %}
+      <li class="{{ category }}">
+          {{ message }}
+      </li>
+      {% endfor %}
+  </ul>
+  {% endif %}
+  {% endwith %}
+</div>
+<div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
       <div class="container">
         <a class="navbar-brand" href="#"><span style="color:red;">Indispensable</span><span>ME</span></a>
