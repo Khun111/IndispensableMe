@@ -71,3 +71,13 @@ input[type="submit"] {
 .top {
     margin-top: -10%;
 }
+
+#user_password {
+    position: relative;
+}
+
+#eye {
+    position: absolute;
+    right: 100px;
+    cursor: pointer;
+}

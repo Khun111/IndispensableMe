@@ -54,8 +54,11 @@
                               <div class="col-md-1">
                                   <i class="fa fa-key"></i>
                               </div>
-                              <div class="col-md-10">
+                              <div class="col-md-9 col-sm-9">
                                   <input  class="form-control" type="password" name="password" id="user_password" placeholder="Enter password">   
+                              </div>
+                              <div class="col-md-2 col-sm-2">
+                                <i class="fa fa-eye" id="eye"></i>
                               </div>
                           </div>
 
@@ -86,5 +89,16 @@
       </div>
   </div>
 </section>
+
+<script>
+    const showPassword = document.querySelector("#eye")
+    const passwordField = document.querySelector("#user_password")
+
+    showPassword.addEventListener("click", function(){
+    this.classList.toggle("fa-eye-slash");
+    const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+    passwordField.setAttribute("type", type);
+})
+</script>
 
 {% endblock %}
